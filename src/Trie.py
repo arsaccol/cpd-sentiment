@@ -56,7 +56,23 @@ class Trie:
         return all_words
             
 
-            
+    def __contains__(self, key):
+        node_it = self
+        key_it = 0
+
+        while key_it < len(key):  
+            char = key[key_it]
+            if char in node_it.children:
+                node_it = node_it.children[char]
+                key_it += 1
+            else:
+                break
+        if key_it == len(key) and node_it.accepts:
+            return True
+        else:
+            return False
+
+
 
     def __getitem__(self, key):
         node_it = self
