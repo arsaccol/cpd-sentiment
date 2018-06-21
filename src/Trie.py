@@ -136,3 +136,9 @@ if __name__ == '__main__':
 
     print(t.get_all_words())
 
+    if 'best' not in t:
+        print('best not in trie')
+
+    if 'stomp' in t:
+        print('stomp in trie')
+

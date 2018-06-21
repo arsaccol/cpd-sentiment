@@ -35,9 +35,7 @@ def main():
             else:
                 current_review_dict[word].append(review.score)
             '''
-            if word not in word_dictionary:
-                print('Word', '\"' + word + '\"', 'not in dictionary, adding...')
-                word_dictionary.insert(word)
+            word_dictionary.insert(word)
 
     #print(word_dictionary)
     #print('combination: ', ['combination'])
