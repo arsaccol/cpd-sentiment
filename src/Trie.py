@@ -34,11 +34,29 @@ class Trie:
         node_it.data = data
         #print('word_it ', word_it, '\t node_it ', node_it)
         
-    '''
     def get_all_words(self):
-        word = ''
-        stack = []
-    '''
+        all_words = []
+        current_word = ''
+        def recursive_fn(node, all_words, current_word):
+            if node == None:
+                return
+            current_word += node.char
+            if node.accepts:
+                all_words.append(current_word)
+            # TODO: correct this so that we iterate over dict
+            # keys in sorted order; this will give us a correct 
+            # lexicographical sort
+            for child in node.children.values():
+                recursive_fn(child, all_words, current_word)
+            current_word = current_word[:-1]
+
+        # call recursive_fn defined above
+        recursive_fn(self, all_words, current_word)
+
+        return all_words
+            
+
+            
 
     def __getitem__(self, key):
         node_it = self
@@ -99,4 +117,6 @@ if __name__ == '__main__':
     print(t)
     print(t['stomp'])
     print(t['sto'])
+
+    print(t.get_all_words())
 
