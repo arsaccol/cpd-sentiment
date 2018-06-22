@@ -23,7 +23,8 @@ def main():
     word_dictionary = Trie()
     
     for review in review_list:
-        review = Review(review.score, review.text.split(' '))
+        # composed words with hyphens are separated into different single ones
+        review = Review(review.score, review.text.replace('-', ' ').split(' '))
         current_review_dict = dict()
         for word in review.text:
             word = word.replace('\t', '')
@@ -39,7 +40,7 @@ def main():
 
     #print(word_dictionary)
     #print('combination: ', ['combination'])
-    #print(word_dictionary.get_all_words())
+    print(word_dictionary.get_all_words())
 
     
 
