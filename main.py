@@ -12,7 +12,7 @@ def main():
     if len(sys.argv) == 2:
        input_file = open(sys.argv[1], encoding='UTF-8-sig')
     else:
-       print("opening default(movieReviews.txt")
+       print("opening default(movieReviews.txt)...")
        input_file = open('./input/movieReviews.txt', encoding='UTF-8-sig')
 
     # create list of reviews associated with scores
@@ -41,20 +41,22 @@ def main():
                 current_review_dict[word].append(review.score)
             '''
             if word in word_dictionary:
-                #add 1 in number of ocurrencies
-                print(word)
+                aux_list = word_dictionary[word]
+                aux_list[0] = (int(aux_list[0])) + (int(review.score))  #adds the score into the already existing element
+                aux_list[1] = (int(aux_list[1])) + 1  #increases ocurrency number
+                word_dictionary[word] = aux_list
             else:
-                word_dictionary.insert(word, review.score)
-                #sets word value
-                #sets number of ocurrencies to 1
+                word_dictionary.insert(word,[review.score, 1, 0]) #review_score, ocurrencies, real_value
+                                                                # (will be calculated after all insertions)
 
             #word_dictionary[word] = None
-
     #print(word_dictionary)
     #print('combination: ', ['combination'])
-    #print(word_dictionary.get_all_words())
+    print(word_dictionary.get_all_words())
     print('Trie dictionary has',len(word_dictionary),'words')
-
+    #print(word_dictionary['teste'])  #isso printa o valor atribuido à palavra teste.
+    if 'bad' in word_dictionary:
+        print(word_dictionary['bad'])
 
 if __name__ == '__main__':
     main()
