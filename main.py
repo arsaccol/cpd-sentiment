@@ -9,10 +9,14 @@ Review = namedtuple('Review', ['score', 'text'])
 
 
 def main():
-    if len(sys.argv) != 2:
-        sys.exit('Wrong arguments')
+   # if len(sys.argv) != 2:
+    #    sys.exit('Wrong arguments')
 
-    input_file = open(sys.argv[1])
+    if len(sys.argv) == 2:
+       input_file = open(sys.argv[1], encoding='UTF-8-sig')
+    else:
+       print("opening default(movieReviews.txt")
+       input_file = open('./input/movieReviews.txt', encoding='UTF-8-sig')
 
     # create list of reviews associated with scores
     review_list= []
