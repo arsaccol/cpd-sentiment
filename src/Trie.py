@@ -131,32 +131,20 @@ class Trie:
 if __name__ == '__main__':
     t = Trie()
 
-    t.insert('buy', 1234)
-    t.insert('bull', 1234)
-    t.insert('bear', 1234)
-    t.insert('bid', 1234)
-    t.insert('bell', 1234)
-    t.insert('sell', 1234)
-    t.insert('stock', 1234)
-    t.insert('stop', 1234)
-    t.insert('stomp', 7777)
-    t.insert('bust', 0)
+    words = ['buy', 'bull', 'bear', 'bid', 'bell',
+             'sell', 'stock', 'stop', 'stomp', 'bust']
+
+    counter = 1
+    for word in words:
+        t[word] = counter * 1000
+        counter += 1
 
     t['setitem'] = {'this': 1234, 'that': 4321}
-    #print(t['stomp'])
-    #print(t['sto'])
-
 
     print(t)
-
     print(t.get_all_words())
-
-    if 'best' not in t:
-        print('best not in trie')
-
-    if 'stomp' in t:
-        print('stomp in trie')
-    
     print('length of trie:',len(t))
 
+    for word in t:
+        print(word)
 
