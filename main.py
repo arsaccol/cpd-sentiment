@@ -41,6 +41,7 @@ def main():
     #print(word_dictionary)
     #print('combination: ', ['combination'])
     print(word_dictionary.get_all_words())
+    print('Trie dictionary has',len(word_dictionary),'words')
 
     
 

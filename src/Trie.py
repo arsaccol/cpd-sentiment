@@ -52,6 +52,20 @@ class Trie:
         recursive_fn(self, all_words, current_word)
 
         return all_words
+
+    def __len__(self):
+        if self.accepts:
+            length = 1
+        else:
+            length = 0
+
+        for child in self.children.values():
+            length += child.__len__()
+
+        return length
+
+            
+
             
 
     def __contains__(self, key):
@@ -124,6 +138,7 @@ if __name__ == '__main__':
     t.insert('stock', 1234)
     t.insert('stop', 1234)
     t.insert('stomp', 7777)
+    t.insert('bust', 0)
 
     print(t)
     #print(t['stomp'])
@@ -136,4 +151,6 @@ if __name__ == '__main__':
 
     if 'stomp' in t:
         print('stomp in trie')
+    
+    print('length of trie:',len(t))
 
