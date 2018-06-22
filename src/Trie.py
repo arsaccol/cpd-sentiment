@@ -113,8 +113,10 @@ class Trie:
                   ' provided is a prefix in the trie, but isn\'t a valid key. ' +
                   'Returning None.')
             return None
-
         
+    def __setitem__(self, key, value):
+        self.insert(key, value)
+    
     def __repr__(self, depth=0):  
 
         string = '__' * (depth-1) + self.char + '\t\t' + \
@@ -140,9 +142,12 @@ if __name__ == '__main__':
     t.insert('stomp', 7777)
     t.insert('bust', 0)
 
-    print(t)
+    t['setitem'] = {'this': 1234, 'that': 4321}
     #print(t['stomp'])
     #print(t['sto'])
+
+
+    print(t)
 
     print(t.get_all_words())
 
@@ -153,4 +158,5 @@ if __name__ == '__main__':
         print('stomp in trie')
     
     print('length of trie:',len(t))
+
 
