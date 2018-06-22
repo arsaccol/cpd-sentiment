@@ -43,10 +43,8 @@ class Trie:
             current_word += node.char
             if node.accepts:
                 all_words.append(current_word)
-            # TODO: correct this so that we iterate over dict
-            # keys in sorted order; this will give us a correct 
-            # lexicographical sort
-            for child in node.children.values():
+            for character in sorted(node.children.keys()):
+                child = node.children[character]
                 recursive_fn(child, all_words, current_word)
             current_word = current_word[:-1]
 
@@ -101,9 +99,6 @@ class Trie:
                   ' provided is a prefix in the trie, but isn\'t a valid key. ' +
                   'Returning None.')
             return None
-            
-        
-
 
         
     def __repr__(self, depth=0):  
@@ -131,8 +126,8 @@ if __name__ == '__main__':
     t.insert('stomp', 7777)
 
     print(t)
-    print(t['stomp'])
-    print(t['sto'])
+    #print(t['stomp'])
+    #print(t['sto'])
 
     print(t.get_all_words())
 
