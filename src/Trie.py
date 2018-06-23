@@ -1,11 +1,39 @@
-
+# TODO: implement proper __iter__ and __next__ functions, to enable 
+#       iteration over words with for
 class Trie:
+    '''
+    Trie dictionary. Stores words associated with satellite data.
+
+    -To insert a value, use 
+            trie_object.insert(key, value) 
+            or
+            trie_object[key] = value
+
+
+    -To get a value with a key in the trie, use
+            value_storage = trie_object[key]
+            (raises KeyError if key not present) 
+
+
+    -To check if a key is present in the trie, use
+            if key in trie_object:
+                do_something()
+
+
+    -To get a list with all keys present in the trie, use
+            all_keys = trie_object.get_all_words()
+
+    -To get the number of elements stores in the trie, do as usual:
+            num_elements = len(trie_object)
+    
+    '''
     def __init__(self, char='', data=None):
         self.accepts = False
         self.children = dict()
         self.char = char
         self.data = data
     
+
     def insert(self, word, data=None):
         '''
         Inserts a word in the trie, possibly along with satellite data
@@ -34,6 +62,7 @@ class Trie:
         node_it.data = data
         #print('word_it ', word_it, '\t node_it ', node_it)
         
+
     def get_all_words(self):
         all_words = []
         current_word = ''
@@ -53,6 +82,7 @@ class Trie:
 
         return all_words
 
+
     def __len__(self):
         if self.accepts:
             length = 1
@@ -63,9 +93,6 @@ class Trie:
             length += child.__len__()
 
         return length
-
-            
-
             
 
     def __contains__(self, key):
@@ -83,7 +110,6 @@ class Trie:
             return True
         else:
             return False
-
 
 
     def __getitem__(self, key):
@@ -104,7 +130,6 @@ class Trie:
             key_ok = True
         else:
             raise KeyError
-            return None
 
         if key_ok and node_it.accepts:
             return node_it.data
@@ -112,10 +137,12 @@ class Trie:
             print('Error: key ' + '\"' + key + '\"' + \
                   ' provided is a prefix in the trie, but isn\'t a valid key. ' +
                   'Returning None.')
-            return None
+            raise KeyError
         
+
     def __setitem__(self, key, value):
         self.insert(key, value)
+
     
     def __repr__(self, depth=0):  
 
@@ -127,6 +154,7 @@ class Trie:
             string += child.__repr__(depth+1)
 
         return string 
+
 
 if __name__ == '__main__':
     t = Trie()
@@ -145,6 +173,10 @@ if __name__ == '__main__':
     print(t.get_all_words())
     print('length of trie:',len(t))
 
-    for word in t:
-        print(word)
+    try:
+        value = t['buddy']
+    except KeyError:
+        print('Oops, we couldn\'t find "buddy"')
+    #for word in t:
+        #print(word)
 
