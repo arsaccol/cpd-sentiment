@@ -13,8 +13,6 @@ def clean_word(word):
     word = word.replace('.', '')
     word = word.replace(',', '')
 
-    return word
-
 
 def main():
    # if len(sys.argv) != 2:
@@ -41,7 +39,7 @@ def main():
         review = Review(review.score, review.text.replace('-', ' ').split(' '))
         current_review_dict = dict()
         for word in review.text:
-            word = clean_word(word)
+            clean_word(word)
 
             if word in word_dictionary:
                 old_word_stats = word_dictionary[word]
@@ -76,20 +74,23 @@ def main():
    # if 'good' in word_dictionary:
    #    print('good:', word_dictionary['good'])
 
-    input_word = input('Digite a frase ou palavra a ser calculada o score: ')
-    acumulator = 0
-    ocurr = 0
+    input_word = input('Enter the word or sentence to have its score calculated: ')
+    accumulator = 0
+    occurr = 0
 
     for word in input_word.split():
-         word = word.replace('\t', '')
-         word = word.replace('\n', '')
-         word = word.lower()
-         word = word.replace('.', '')
-         word = word.replace(',', '')
-         aux = word_dictionary[word]
-         acumulator = acumulator + aux[0]/aux[1]
-         ocurr = ocurr + 1
-    sentence_value = acumulator/ocurr
+        clean_word(word)
+        try:
+            word_stats = word_dictionary[word]
+        except KeyError:
+            # THIS MIGHT NOT BE DESIRED BEHAVIOR
+            # we insert the word with a "neutral" average of 2.0,
+            # as that is the average between the min (0) and max (4) possible values
+            word_dictionary[word] = WordStats(score_sum=1, occurrences=1, average=2.0)
+
+        accumulator = accumulator + word_stats.score_sum / word_stats.occurrences
+        occurr = occurr + 1
+        sentence_value = accumulator/occurr
     print('phrase value = ' + (str(sentence_value)))
 
 if __name__ == '__main__':
