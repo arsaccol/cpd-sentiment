@@ -52,11 +52,34 @@ def main():
             #word_dictionary[word] = None
     #print(word_dictionary)
     #print('combination: ', ['combination'])
-    print(word_dictionary.get_all_words())
-    print('Trie dictionary has',len(word_dictionary),'words')
+    #print(word_dictionary.get_all_words())
+    #print('Trie dictionary has',len(word_dictionary),'words')
     #print(word_dictionary['teste'])  #isso printa o valor atribuido à palavra teste.
-    if 'bad' in word_dictionary:
-        print(word_dictionary['bad'])
+    #if 'bad' in word_dictionary:
+    #    print(word_dictionary['bad'])
+    #    listt = word_dictionary['bad']
+    #    blabla = listt[0]/listt[1]
+    #    print(blabla)
+
+
+    input_word = input('Digite a frase ou palavra a ser calculada o score: ')
+    acumulator = 0
+    ocurr = 0
+
+    for word in input_word.split():
+         word = word.replace('\t', '')
+         word = word.replace('\n', '')
+         word = word.lower()
+         word = word.replace('.', '')
+         word = word.replace(',', '')
+         aux = word_dictionary[word]
+         acumulator = acumulator + aux[0]/aux[1]
+         ocurr = ocurr + 1
+    sentence_value = acumulator/ocurr
+    print('phrase value = ' + (str(sentence_value)))
+
+
+
 
 if __name__ == '__main__':
     main()
