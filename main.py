@@ -61,7 +61,6 @@ def main():
     #print(word_dictionary)
     #print('combination: ', ['combination'])
     #print(word_dictionary.get_all_words())
-<<<<<<< HEAD
     #print('Trie dictionary has',len(word_dictionary),'words')
     #print(word_dictionary['teste'])  #isso printa o valor atribuido à palavra teste.
     #if 'bad' in word_dictionary:
@@ -70,6 +69,12 @@ def main():
     #    blabla = listt[0]/listt[1]
     #    print(blabla)
 
+   # print('Trie dictionary has',len(word_dictionary),'words')
+   # print(word_dictionary['teste'])  #isso printa o valor atribuido à palavra teste.
+   # if 'bad' in word_dictionary:
+   #    print('bad:', word_dictionary['bad'])
+   # if 'good' in word_dictionary:
+   #    print('good:', word_dictionary['good'])
 
     input_word = input('Digite a frase ou palavra a ser calculada o score: ')
     acumulator = 0
@@ -86,15 +91,6 @@ def main():
          ocurr = ocurr + 1
     sentence_value = acumulator/ocurr
     print('phrase value = ' + (str(sentence_value)))
-
-
-
-    print('Trie dictionary has',len(word_dictionary),'words')
-    #print(word_dictionary['teste'])  #isso printa o valor atribuido à palavra teste.
-    if 'bad' in word_dictionary:
-        print('bad:', word_dictionary['bad'])
-    if 'good' in word_dictionary:
-        print('good:', word_dictionary['good'])
 
 if __name__ == '__main__':
     main()
