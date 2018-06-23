@@ -96,32 +96,29 @@ def main():
 
 
     print('Escreva uma valiacao (digite SAIR para sair) : ')
-    input_word = input('>> ')
-    while input_word != 'SAIR':
+    input_sentence = input('>> ')
+    while input_sentence != 'SAIR':
         acumulator = 0
         ocurr = 0
-        for word in input_word.split():
+        for word in input_sentence.split():
              if word in word_dictionary:
-                 word = word.replace('\t', '')
-                 word = word.replace('\n', '')
-                 word = word.lower()
-                 word = word.replace('.', '')
-                 word = word.replace(',', '')
-                 aux = word_dictionary[word]
-                 acumulator = acumulator + aux[0]/aux[1]
+                 clean_word(word)
+                 word_stats = word_dictionary[word]
+                 acumulator = acumulator + word_stats[0]/aux[1]
              else:
                  acumulator = acumulator + 2
              ocurr = ocurr + 1
-        sentence_value = acumulator/ocurr
+        sentence_score = acumulator/ocurr
 
-        print('O comentario tem um escore medio de ' + (str(sentence_value)))
-        if sentence_value < 1:
+        print('O comentario tem um escore medio de ' + (str(sentence_score)))
+
+        if sentence_score < 1:
            print('sentimento negativo')
-        elif sentence_value < 2:
+        elif sentence_score < 2:
            print('sentimento um tanto negativo')
-        elif sentence_value < 3:
+        elif sentence_score < 3:
            print('sentimento neutro')
-        elif sentence_value < 4:
+        elif sentence_score < 4:
            print('sentimento um pouco positivo')
         else:
            print('sentimento positivo')
