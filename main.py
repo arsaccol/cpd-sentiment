@@ -81,15 +81,19 @@ def main():
     ocurr = 0
 
     for word in input_word.split():
-         word = word.replace('\t', '')
-         word = word.replace('\n', '')
-         word = word.lower()
-         word = word.replace('.', '')
-         word = word.replace(',', '')
-         aux = word_dictionary[word]
-         acumulator = acumulator + aux[0]/aux[1]
+         if word in word_dictionary:
+             word = word.replace('\t', '')
+             word = word.replace('\n', '')
+             word = word.lower()
+             word = word.replace('.', '')
+             word = word.replace(',', '')
+             aux = word_dictionary[word]
+             acumulator = acumulator + aux[0]/aux[1]
+         else:
+             acumulator = acumulator +3
          ocurr = ocurr + 1
     sentence_value = acumulator/ocurr
+
     print('phrase value = ' + (str(sentence_value)))
 
 if __name__ == '__main__':
