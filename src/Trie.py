@@ -129,12 +129,12 @@ class Trie:
         if key_it == len(key):
             key_ok = True
         else:
-            raise KeyError('Key not present.')
+            raise KeyError('Key '+ '\"' + key + '\" '+ ' not present.')
 
         if key_ok and node_it.accepts:
             return node_it.data
         else:
-            raise KeyError('Key provided is a prefix in the trie, but isn\'t a valid key.')
+            raise KeyError('Key ' + '\"' + key + '\"' + ' is a prefix in the trie, but is not a valid key.')
         
 
     def __setitem__(self, key, value):
