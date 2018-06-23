@@ -92,6 +92,42 @@ def main():
         occurr = occurr + 1
         sentence_value = accumulator/occurr
     print('phrase value = ' + (str(sentence_value)))
+    input_word = ''
+
+
+    print('Escreva uma valiacao (digite SAIR para sair) : ')
+    input_word = input('>> ')
+    while input_word != 'SAIR':
+        acumulator = 0
+        ocurr = 0
+        for word in input_word.split():
+             if word in word_dictionary:
+                 word = word.replace('\t', '')
+                 word = word.replace('\n', '')
+                 word = word.lower()
+                 word = word.replace('.', '')
+                 word = word.replace(',', '')
+                 aux = word_dictionary[word]
+                 acumulator = acumulator + aux[0]/aux[1]
+             else:
+                 acumulator = acumulator + 2
+             ocurr = ocurr + 1
+        sentence_value = acumulator/ocurr
+
+        print('O comentario tem um escore medio de ' + (str(sentence_value)))
+        if sentence_value < 1:
+           print('sentimento negativo')
+        elif sentence_value < 2:
+           print('sentimento um tanto negativo')
+        elif sentence_value < 3:
+           print('sentimento neutro')
+        elif sentence_value < 4:
+           print('sentimento um pouco positivo')
+        else:
+           print('sentimento positivo')
+
+        print('Escreva uma valiacao (digite SAIR para sair) : ')
+        input_word = input('>> ')
 
 if __name__ == '__main__':
     main()
