@@ -4,6 +4,17 @@ from collections import namedtuple
 from src.Trie import Trie
 
 Review = namedtuple('Review', ['score', 'text'])
+WordStats = namedtuple('WordStats', ['score_sum', 'occurrences', 'average'])
+
+def clean_word(word):
+    word = word.replace('\t', '')
+    word = word.replace('\n', '')
+    word = word.lower()
+    word = word.replace('.', '')
+    word = word.replace(',', '')
+
+    return word
+
 
 def main():
    # if len(sys.argv) != 2:
@@ -12,13 +23,14 @@ def main():
     if len(sys.argv) == 2:
        input_file = open(sys.argv[1], encoding='UTF-8-sig')
     else:
-       print("opening default(movieReviews.txt)...")
+       print("Opening default (movieReviews.txt)...")
        input_file = open('./input/movieReviews.txt', encoding='UTF-8-sig')
 
     # create list of reviews associated with scores
     review_list= []
     for line in input_file:
-        review_list.append( Review(score=line[0], text=line[1:]) )
+        if line != '\n':
+            review_list.append( Review(score=line[0], text=line[1:]) )
 
     #word_dictionary = dict() # word -> number of occurrences
     word_dictionary = Trie()
@@ -29,30 +41,27 @@ def main():
         review = Review(review.score, review.text.replace('-', ' ').split(' '))
         current_review_dict = dict()
         for word in review.text:
-            word = word.replace('\t', '')
-            word = word.replace('\n', '')
-            word = word.lower()
-            word = word.replace('.', '')
-            word = word.replace(',', '')
-            '''
-            if word not in current_review_dict:
-                current_review_dict[word] = []
-            else:
-                current_review_dict[word].append(review.score)
-            '''
+            word = clean_word(word)
+
             if word in word_dictionary:
-                aux_list = word_dictionary[word]
-                aux_list[0] = (int(aux_list[0])) + (int(review.score))  #adds the score into the already existing element
-                aux_list[1] = (int(aux_list[1])) + 1  #increases ocurrency number
-                word_dictionary[word] = aux_list
+                old_word_stats = word_dictionary[word]
+                new_score_sum = int(old_word_stats.score_sum) + int(review.score)
+                new_occurrences = old_word_stats.occurrences + 1
+                new_average = float(new_score_sum) / new_occurrences
+                new_word_stats = WordStats(new_score_sum, new_occurrences, new_average)
+
+                word_dictionary[word] = new_word_stats
             else:
-                word_dictionary.insert(word,[review.score, 1, 0]) #review_score, ocurrencies, real_value
-                                                                # (will be calculated after all insertions)
+                word_dictionary[word] = WordStats(score_sum=int(review.score), \
+                                                  occurrences=1, \
+            # TODO: make it so that average is calculated after all insertions
+                                                  average=review.score)
 
             #word_dictionary[word] = None
     #print(word_dictionary)
     #print('combination: ', ['combination'])
     #print(word_dictionary.get_all_words())
+<<<<<<< HEAD
     #print('Trie dictionary has',len(word_dictionary),'words')
     #print(word_dictionary['teste'])  #isso printa o valor atribuido à palavra teste.
     #if 'bad' in word_dictionary:
@@ -80,6 +89,12 @@ def main():
 
 
 
+    print('Trie dictionary has',len(word_dictionary),'words')
+    #print(word_dictionary['teste'])  #isso printa o valor atribuido à palavra teste.
+    if 'bad' in word_dictionary:
+        print('bad:', word_dictionary['bad'])
+    if 'good' in word_dictionary:
+        print('good:', word_dictionary['good'])
 
 if __name__ == '__main__':
     main()
