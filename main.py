@@ -109,6 +109,40 @@ def main():
             print('sentimento positivo')
 
 
+        #READING INPUT FILE FOR EVALUATION
+
+
+    input_file = open('./input/kaggleInput.tsv', encoding='UTF-8-sig') #opens input file with sentences to be evaluated
+    f = open('./output/kaggle.txt', "w+")   #creates output file
+    f.write('PhraseId,Sentiment' + '\n')    #writes first line in output file
+    input_file.readline()                   #ignores first line in input file
+
+    comment = []
+    for line in input_file:   #goes through every line
+        if line != '\n':
+            id=line[0:6]
+            comment=line[12:]
+            ##
+            input_word = comment
+            accumulator = 0
+            occurr = 0
+            for word in input_word.split():
+                clean_word(word)
+            try:
+                word_stats = word_dictionary[word]
+            except KeyError:
+                word_dictionary[word] = WordStats(score_sum=2, occurrences=1, average=2.0)
+                word_stats = word_dictionary[word]
+
+            accumulator = accumulator + word_stats.score_sum / word_stats.occurrences
+            occurr = occurr + 1
+            sentence_value = accumulator / occurr
+
+
+        f.write(id + ',' + (str(int(round(sentence_value)))) + '\n') #prints phrase id and phrase sentiment
+                                                                        # in output file
+
+
 if __name__ == '__main__':
     main()
 
