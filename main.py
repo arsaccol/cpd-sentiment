@@ -78,7 +78,6 @@ def main():
     print('Enter the word or sentence to have its score calculated(type ESC for quitting: ')
     input_word = input('>> ')
 
-
     while input_word != 'SAIR':
         accumulator = 0
         occurr = 0
@@ -90,7 +89,8 @@ def main():
                 # THIS MIGHT NOT BE DESIRED BEHAVIOR
                 # we insert the word with a "neutral" average of 2.0,
                 # as that is the average between the min (0) and max (4) possible values
-                word_dictionary[word] = WordStats(score_sum=1, occurrences=1, average=2.0)
+                word_dictionary[word] = WordStats(score_sum=2, occurrences=1, average=2.0)
+                word_stats = word_dictionary[word]
 
             accumulator = accumulator + word_stats.score_sum / word_stats.occurrences
             occurr = occurr + 1
