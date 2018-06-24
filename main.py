@@ -74,54 +74,39 @@ def main():
    # if 'good' in word_dictionary:
    #    print('good:', word_dictionary['good'])
 
-    input_word = input('Enter the word or sentence to have its score calculated: ')
-    accumulator = 0
-    occurr = 0
 
-    for word in input_word.split():
-        clean_word(word)
-        try:
-            word_stats = word_dictionary[word]
-        except KeyError:
-            # THIS MIGHT NOT BE DESIRED BEHAVIOR
-            # we insert the word with a "neutral" average of 2.0,
-            # as that is the average between the min (0) and max (4) possible values
-            word_dictionary[word] = WordStats(score_sum=1, occurrences=1, average=2.0)
-
-        accumulator = accumulator + word_stats.score_sum / word_stats.occurrences
-        occurr = occurr + 1
-        sentence_value = accumulator/occurr
-    print('phrase value = ' + (str(sentence_value)))
-    input_word = ''
+    print('Enter the word or sentence to have its score calculated(type ESC for quitting: ')
+    input_word = input('>> ')
 
 
-    print('Escreva uma valiacao (digite SAIR para sair) : ')
-    input_sentence = input('>> ')
-    while input_sentence != 'SAIR':
-        acumulator = 0
-        ocurr = 0
-        for word in input_sentence.split():
-             if word in word_dictionary:
-                 clean_word(word)
-                 word_stats = word_dictionary[word]
-                 acumulator = acumulator + word_stats[0]/aux[1]
-             else:
-                 acumulator = acumulator + 2
-             ocurr = ocurr + 1
-        sentence_score = acumulator/ocurr
+    while input_word != 'SAIR':
+        accumulator = 0
+        occurr = 0
+        for word in input_word.split():
+            clean_word(word)
+            try:
+                word_stats = word_dictionary[word]
+            except KeyError:
+                # THIS MIGHT NOT BE DESIRED BEHAVIOR
+                # we insert the word with a "neutral" average of 2.0,
+                # as that is the average between the min (0) and max (4) possible values
+                word_dictionary[word] = WordStats(score_sum=1, occurrences=1, average=2.0)
 
-        print('O comentario tem um escore medio de ' + (str(sentence_score)))
+            accumulator = accumulator + word_stats.score_sum / word_stats.occurrences
+            occurr = occurr + 1
+            sentence_value = accumulator/occurr
 
-        if sentence_score < 1:
-           print('sentimento negativo')
-        elif sentence_score < 2:
-           print('sentimento um tanto negativo')
-        elif sentence_score < 3:
-           print('sentimento neutro')
-        elif sentence_score < 4:
-           print('sentimento um pouco positivo')
+        print('sentence value = ' + (str(sentence_value)))
+        if sentence_value < 1:
+            print('sentimento negativo')
+        elif sentence_value < 2:
+            print('sentimento um tanto negativo')
+        elif sentence_value < 3:
+            print('sentimento neutro')
+        elif sentence_value < 4:
+            print('sentimento um pouco positivo')
         else:
-           print('sentimento positivo')
+            print('sentimento positivo')
 
         print('Escreva uma valiacao (digite SAIR para sair) : ')
         input_word = input('>> ')
