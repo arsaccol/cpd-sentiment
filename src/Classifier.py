@@ -131,8 +131,144 @@ class Classifier:
 
         return word 
 
-if __name__ == '__main__':
 
+KaggleReview = namedtuple('KaggleReview', ['phrase_id', 'text', 'sentiment'])
+
+# WARNING: this entire class is a big hack. Its functionality should
+#          be integrated with the original Classifier class. Instead,
+#          the class has lots of duplicate code from Classifier.
+class KaggleClassifier:
+    # ...Screw it at this point, I'll just reimplement the Classifier, 
+    # only adapted to Kaggle's dataset format
+    # Later I'll have to find a way to put both classes together, though.
+
+
+    def __init__(self, filename='./input/train.tsv'):
+        self.word_stats_trie = Trie()
+        self.train_from_file_input(filename)
+        self.test_from_file_input_to_output()
+
+
+    def get_review(self, line, test=False):
+        phrase_id = int(line.split()[0])
+        text = ' '.join(line.split()[2:-1])
+        if test:
+            sentiment = -1
+        else:
+            sentiment = int(line.split()[-1])
+
+        #print(phrase_id, '---', text, '---', sentiment)
+
+        return KaggleReview(phrase_id=phrase_id, text=text, sentiment=sentiment)
+        
+    def train_from_file_input(self, filename='./input/train.tsv'):
+        try:
+            train_file = open(filename, encoding='UTF-8-sig')
+        except IOError:
+            print('Could not open training file', filename)
+            sys.exit()
+        with train_file:
+            # skip column descriptor line
+            train_file.readline() 
+            for line in train_file:
+                review = self.get_review(line)
+                self.update_word_stats(review)
+    
+    def test_from_file_input_to_output(self, input_filename='./input/test.tsv'):
+        output_filename = './output/' + 'results.csv'
+
+        try:
+            test_file = open(input_filename, encoding='UTF-8-sig')
+            results_file = open(output_filename, 'w+')
+        except IOError:
+            print('Could not open test file', filename)
+            sys.exit()
+        with test_file, results_file:
+            test_file.readline()
+            results_file.write('PhraseId,Sentiment' + '\n')
+
+            for line in test_file:
+                review = self.get_review(line, test=True)
+                phrase_id = review.phrase_id
+                print(review.text)
+                sentiment = int(self.evaluate_sentence(review.text) + 0.5)
+                output_line = str(phrase_id) + ',' + str(sentiment) + '\n'
+
+                results_file.write(output_line)
+                
+                
+
+
+
+    def evaluate_sentence(self, sentence, store_absent=False):
+        '''
+        Calculates and returns average of scores of all words in the sentence.
+        '''
+        
+        total_sum = 0.0
+        sentence_length = len(sentence.split())
+        # I'm doubtful 0-length sentences should be a thing,
+        # yet there have been a few.
+        if sentence_length == 0:
+            return -1
+
+        for word in sentence.split():
+            word = self.clean_word(word)
+
+            try:
+                word_stats = self.word_stats_trie[word]
+            except KeyError:
+                word_stats = WordStats(score_sum=2, occurrences=1, average_score=2.0)
+                if store_absent:
+                    self.word_stats_trie[word] = word_stats 
+
+            total_sum += word_stats.average_score
+                
+        sentence_score = total_sum / sentence_length
+
+        return sentence_score
+        
+        
+
+    def update_word_stats(self, review):
+        # copied straight from Classifier
+        # only change is review.sentiment instead of review.score
+        for word in review.text.split():
+            if word in self.word_stats_trie:
+                old_word_stats = self.word_stats_trie[word] 
+                new_score_sum = review.sentiment + old_word_stats.score_sum
+                new_occurrences = 1 + old_word_stats.occurrences
+                # rather than compute new_average on the fly, we should use
+                # Trie iteration on all words at a later stage
+                new_average = new_score_sum / new_occurrences
+
+                new_word_stats = WordStats(new_score_sum, new_occurrences, new_average)
+
+                self.word_stats_trie[word] = new_word_stats
+
+            else:
+                new_stats = WordStats(score_sum=review.sentiment, \
+                                      occurrences=1, \
+                                      average_score=review.sentiment)
+                self.word_stats_trie[word] = new_stats
+            
+    def clean_word(self, word):
+        '''
+        Removes unwanted characters.
+        '''
+        word = word.replace('\t', '')
+        word = word.replace('\n', '')
+        word = word.lower()
+        word = word.replace('.', '')
+        word = word.replace(',', '')
+
+        return word 
+
+
+
+
+#===================== test_classifier =====================
+def test_classifier():
     import sys
     if len(sys.argv) == 2:
         # command-line arguments to avoid typing stuff over again and again
@@ -152,6 +288,17 @@ if __name__ == '__main__':
     print()
     for sentence in sentences:
         print(classifier.evaluate_sentence(sentence), '---', sentence)
-    
 
+#===================== test_kaggle_classifier =====================
+def test_kaggle_classifier():
+    import sys
+    if len(sys.argv) == 2:
+        kaggle_classifier = KaggleClassifier(sys.argv[1])
+    else:
+        kaggle_classifier = KaggleClassifier()
+
+
+if __name__ == '__main__':
+    # test_classifier()
+    test_kaggle_classifier()
 
