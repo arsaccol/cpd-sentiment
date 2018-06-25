@@ -32,6 +32,7 @@ class Trie:
         self.children = dict()
         self.char = char
         self.data = data
+        self.word = None
     
 
     def insert(self, word, data=None):
@@ -60,6 +61,7 @@ class Trie:
 
         node_it.accepts = True
         node_it.data = data
+        node_it.word = word
         #print('word_it ', word_it, '\t node_it ', node_it)
         
 
@@ -151,6 +153,32 @@ class Trie:
             string += child.__repr__(depth+1)
 
         return string 
+    
+    def __iter__(self):
+        self.node_it = self
+        self.traversal_stack = [self.node_it]
+        return self
+
+    def __next__(self):
+        while self.traversal_stack:
+            self.node_it = self.traversal_stack.pop()
+
+            if self.node_it.accepts:
+                return self.node_it
+
+            for char in reversed(sorted(self.node_it.children.keys())):
+                child = self.node_it.children[char]
+                self.traversal_stack.append(child)
+
+        raise StopIteration
+
+
+        
+
+        
+
+        
+        
 
 
 if __name__ == '__main__':
@@ -175,6 +203,10 @@ if __name__ == '__main__':
     except KeyError:
         print('Oops, we couldn\'t find "buddy"')
 
+    print('Iterating over trie!')
+    for accepting_node in t:
+        pass
+        print(accepting_node.word, '---', accepting_node.data)
     #for word in t:
         #print(word)
 
