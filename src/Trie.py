@@ -20,17 +20,20 @@ class Trie:
          in the previous item.
             
 
+
     -To get a list of words beginning with a prefix, use
             words_with_prefix = trie_object.get_words_with_prefix(prefix)
 
     -To get (key,value) pairs corresponding to words beginning with a prefix, use
             kv_pairs_with_prefix = trie_object.get_words_with_prefix(prefix, get_data=True)
             
+        (To either option, a KeyError exception will be raised if prefix is not found)
+
 
 
     -To get a value with a key in the trie, use
             value_storage = trie_object[key]
-            (raises KeyError if key not present) 
+            (Raises KeyError if key not present) 
 
 
     -To check if a key is present in the trie, use
