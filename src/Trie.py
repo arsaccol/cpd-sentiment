@@ -9,6 +9,24 @@ class Trie:
             or
             trie_object[key] = value
 
+    -To iterate over the trie, use
+            for word_node in trie_object:
+                word_access = word_node.word
+                data_access = word_node.data
+
+        Unfortunately, these are "live" nodes from the trie itself,
+         so please watch out not to alter them by assigning things.
+        If you wish to alter trie contents, use insertion as described
+         in the previous item.
+            
+
+    -To get a list of words beginning with a prefix, use
+            words_with_prefix = trie_object.get_words_with_prefix(prefix)
+
+    -To get (key,value) pairs corresponding to words beginning with a prefix, use
+            kv_pairs_with_prefix = trie_object.get_words_with_prefix(prefix, get_data=True)
+            
+
 
     -To get a value with a key in the trie, use
             value_storage = trie_object[key]
@@ -85,6 +103,32 @@ class Trie:
         return all_words
 
 
+    def get_words_with_prefix(self, prefix, get_data=False):
+        '''
+        Returns a list with all words starting with the prefix.
+        Raises exception KeyError if prefix is not present.
+        '''
+        node_it = self
+
+        # first, we get to the node where the prefix is located
+        for ch in prefix:
+            if ch in node_it.children.keys():
+                node_it = node_it.children[ch]
+            else:
+                raise KeyError('Prefix ' + '\"' + prefix + '\"' + ' not found')
+
+        # we found the prefix node, so we return a list containing all words such that
+        # they're the prefix concatenated with our node's suffixes
+        # if get_data is set, we actually return a pair (words, data)
+        if get_data:
+            # the usage of self in this line is an inefficient hack
+            # we should be able to find the data from node_it[suffix], but
+            # that's not working
+            return [ (prefix[:-1] + suffix, self[prefix[:-1] + suffix]) \
+                     for suffix in node_it.get_all_words()  ]
+        else:
+            return [prefix[:-1] + suffix for suffix in node_it.get_all_words()]
+
     def __len__(self):
         if self.accepts:
             length = 1
@@ -155,11 +199,17 @@ class Trie:
         return string 
     
     def __iter__(self):
+        '''
+        Iterator: Trie is its own.
+        '''
         self.node_it = self
         self.traversal_stack = [self.node_it]
         return self
 
     def __next__(self):
+        '''
+        Iterator step.
+        '''
         while self.traversal_stack:
             self.node_it = self.traversal_stack.pop()
 
@@ -171,14 +221,6 @@ class Trie:
                 self.traversal_stack.append(child)
 
         raise StopIteration
-
-
-        
-
-        
-
-        
-        
 
 
 if __name__ == '__main__':
@@ -207,6 +249,23 @@ if __name__ == '__main__':
     for accepting_node in t:
         pass
         print(accepting_node.word, '---', accepting_node.data)
-    #for word in t:
-        #print(word)
+
+    prefix = 'stopper'
+    try:
+        words_with_prefix = t.get_words_with_prefix(prefix)
+        print('\nWords with prefix ' + '\"' + prefix + '\"' + ':')
+        for word in words_with_prefix:
+            print(word)
+    except KeyError:
+        print('Prefix', '\"' + prefix + '\"', 'not found.')
+
+
+    try:
+        words_and_data_with_prefix = t.get_words_with_prefix(prefix, get_data=True)
+        print('\nWords and data with prefix ' + '\"' + prefix + '\"' + ':')
+        for word, data in words_and_data_with_prefix:
+            print(word, '=====', data)
+    except KeyError:
+        print('Prefix', '\"' + prefix + '\"', 'not found.')
+
 
