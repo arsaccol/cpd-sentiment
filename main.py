@@ -74,10 +74,6 @@ def main():
    # if 'good' in word_dictionary:
    #    print('good:', word_dictionary['good'])
 
-
-
-
-
     input_word = ''
     while input_word != 'SAIR':
         print('Escreva uma validacao (digite SAIR para sair) : ')
@@ -97,17 +93,16 @@ def main():
             sentence_value = accumulator/occurr
 
         print('sentence value = ' + (str(sentence_value)))
-        if sentence_value < 1:
+        if (round(sentence_value)) == 0 :
             print('sentimento negativo')
-        elif sentence_value < 2:
+        elif (round(sentence_value)) == 1 :
             print('sentimento um tanto negativo')
-        elif sentence_value < 3:
+        elif (round(sentence_value)) == 2 :
             print('sentimento neutro')
-        elif sentence_value < 4:
+        elif (round(sentence_value)) == 3 :
             print('sentimento um pouco positivo')
         else:
             print('sentimento positivo')
-
 
         #READING INPUT FILE FOR EVALUATION
 
