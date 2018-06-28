@@ -47,6 +47,7 @@ class Classifier:
     def print_reviews_with_word(self, word, sentiment=None):
         position_review_pairs = self.get_reviews_with_word(word)
 
+        review_counter = 0
         if not sentiment:
             print('\n=================================================================')
             print('Reviews with word ' + '\"' + word + '\":')
@@ -56,8 +57,9 @@ class Classifier:
                 print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
                       '\t  Sentiment ' + str(sentiment_val))
                 print('Text: ' + text[2:])
-                print('=================================================================')
                 print()
+                review_counter += 1
+                print('=================================================================')
         elif sentiment == 'Negative':
             print('\n=================================================================')
             print('Reviews with word ' + '\"' + word + '\"' + ' (negative sentiment):')
@@ -68,8 +70,9 @@ class Classifier:
                     print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
                           '\t  Sentiment ' + str(sentiment_val))
                     print('Text: ' + text[2:])
-                    print('=================================================================')
                     print()
+                    review_counter += 1
+                    print('=================================================================')
         elif sentiment == 'Neutral':
             print('\n=================================================================')
             print('Reviews with word ' + '\"' + word + '\"' + ' (positive sentiment):')
@@ -80,8 +83,9 @@ class Classifier:
                     print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
                           '\t  Sentiment ' + str(sentiment_val))
                     print('Text: ' + text[2:])
-                    print('=================================================================')
                     print()
+                    review_counter += 1
+                    print('=================================================================')
 
         elif sentiment == 'Positive':
             print('\n=================================================================')
@@ -93,9 +97,11 @@ class Classifier:
                     print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
                           '\t  Sentiment ' + str(sentiment_val))
                     print('Text: ' + text[2:])
-                    print('=================================================================')
                     print()
+                    review_counter += 1
+                    print('=================================================================')
 
+        return review_counter
             
 
 
@@ -373,8 +379,8 @@ def test_classifier():
 
     all_words = classifier.word_stats_trie.get_all_words()
     for word in all_words:
-        if word == 'innocent':
-            print(word, '---',  classifier.word_stats_trie[word])
+        pass
+        #print(word, '---',  classifier.word_stats_trie[word])
 
     
     sentences = ['bad bad crap terrible', 'good great marvelous bright fantastic']
@@ -383,7 +389,21 @@ def test_classifier():
     for sentence in sentences:
         print(classifier.evaluate_sentence(sentence), '---', sentence)
 
-    classifier.print_reviews_with_word('innocent', 'Neutral')
+    significant_words = ['good', 'bad', 'crap', 'terrible', 'great', 'fantastic']
+    sentiments = ['Negative', 'Neutral', 'Positive']
+
+    for word in significant_words:
+        for sentiment in sentiments:
+            print()
+            print('_' * 80)
+            review_count = classifier.print_reviews_with_word(word, sentiment)
+            print('_' * 80)
+            print('Just printed ' + str(review_count) + ' reviews containing word ' + '\"' + word + '\"' + ' and ' + sentiment.lower() + ' sentiment')
+            stop = input('Continue... (type \"stop\" to stop) ')
+            if stop == 'stop':
+                break
+        if stop == 'stop':
+            break
 
 #===================== test_kaggle_classifier =====================
 def test_kaggle_classifier():

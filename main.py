@@ -1,7 +1,8 @@
 import sys
 from pprint import pprint
 from collections import namedtuple
-from src.Trie import Trie
+from Trie import Trie
+from Classifier import Classifier
 
 Review = namedtuple('Review', ['score', 'text'])
 WordStats = namedtuple('WordStats', ['score_sum', 'occurrences', 'average'])
