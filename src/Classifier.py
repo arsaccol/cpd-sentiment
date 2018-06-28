@@ -3,9 +3,13 @@ from Trie import Trie
 from collections import namedtuple
 import sys
 from pprint import pprint
+import linecache
 
 Review = namedtuple('Review', ['score', 'text'])
-WordStats = namedtuple('WordStats', ['score_sum', 'occurrences', 'average_score'])
+WordStats = namedtuple('WordStats', ['score_sum', 'occurrences', 'average_score', 'review_list'])
+
+ReviewOccurrence = namedtuple('ReviewOccurrence', ['file_line_id', 'word_position'])
+#ReviewList = namedtuple('ReviewList', [
 
 class Classifier:
     # TODO: implement Kaggle test functionality
@@ -15,10 +19,85 @@ class Classifier:
     Then, call Classifier.evaluate_sentence at your leisure to evaluate sentences.
     '''
 
-    def __init__(self, filename='./input/movieReviews.txt'):
+    def __init__(self, filename):
+        self.review_filename = filename
         self.word_stats_trie= Trie()
         self.review_list = self.get_review_list(filename)
         self.set_word_stats()
+
+
+    def get_reviews_with_word(self, word):
+        '''
+        Returns pairs (word_position, review_text) for every occurrence
+            of the word in a review, where word_position is the word's position
+            in the review, starting from 1 (not counting the score as a word), and
+            review_text is the review text itself in lowercase and stripped of some 
+            redundant characters.
+        '''
+        review_occurrences = self.word_stats_trie[word].review_list
+
+        review_lines = [(review_id, \
+                        position+1, \
+                        self.clean_word(linecache.getline(self.review_filename,\
+                                        review_id+1))) \
+                        for review_id, position in review_occurrences]
+
+        return review_lines
+
+    def print_reviews_with_word(self, word, sentiment=None):
+        position_review_pairs = self.get_reviews_with_word(word)
+
+        if not sentiment:
+            print('\n=================================================================')
+            print('Reviews with word ' + '\"' + word + '\":')
+            for review_id, position, text in position_review_pairs:
+                sentiment_val = self.evaluate_sentence(text[2:])
+                print('=================================================================')
+                print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
+                      '\t  Sentiment ' + str(sentiment_val))
+                print('Text: ' + text[2:])
+                print('=================================================================')
+                print()
+        elif sentiment == 'Negative':
+            print('\n=================================================================')
+            print('Reviews with word ' + '\"' + word + '\"' + ' (negative sentiment):')
+            for review_id, position, text in position_review_pairs:
+                sentiment_val = self.evaluate_sentence(text[2:])
+                if int(sentiment_val) < 2:
+                    print('=================================================================')
+                    print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
+                          '\t  Sentiment ' + str(sentiment_val))
+                    print('Text: ' + text[2:])
+                    print('=================================================================')
+                    print()
+        elif sentiment == 'Neutral':
+            print('\n=================================================================')
+            print('Reviews with word ' + '\"' + word + '\"' + ' (positive sentiment):')
+            for review_id, position, text in position_review_pairs:
+                sentiment_val = self.evaluate_sentence(text[2:])
+                if int(sentiment_val) == 2:
+                    print('=================================================================')
+                    print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
+                          '\t  Sentiment ' + str(sentiment_val))
+                    print('Text: ' + text[2:])
+                    print('=================================================================')
+                    print()
+
+        elif sentiment == 'Positive':
+            print('\n=================================================================')
+            print('Reviews with word ' + '\"' + word + '\"' + ' (positive sentiment):')
+            for review_id, position, text in position_review_pairs:
+                sentiment_val = self.evaluate_sentence(text[2:])
+                if int(sentiment_val) > 2:
+                    print('=================================================================')
+                    print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
+                          '\t  Sentiment ' + str(sentiment_val))
+                    print('Text: ' + text[2:])
+                    print('=================================================================')
+                    print()
+
+            
+
 
     def evaluate_sentence(self, sentence, store_absent=False):
         '''
@@ -60,7 +139,9 @@ class Classifier:
         -WordStats.average_score is simply the average, score_sum divided by occurrences,
             of our given word.
         '''
+        review_counter = 0
         for review in self.review_list:
+            word_counter = 0
             for word in review.text.split():
                 if word in self.word_stats_trie:
                     old_word_stats = self.word_stats_trie[word] 
@@ -71,15 +152,27 @@ class Classifier:
                     # Trie iteration on all words at a later stage
                     new_average = new_score_sum / new_occurrences
 
-                    new_word_stats = WordStats(new_score_sum, new_occurrences, new_average)
+                    # set review occurrence list for this word
+                    review_list = old_word_stats.review_list
+                    review_list.append(ReviewOccurrence(review_counter, word_counter))
+
+                    new_word_stats = WordStats(new_score_sum, new_occurrences, \
+                                               new_average, review_list)
 
                     self.word_stats_trie[word] = new_word_stats
 
                 else:
                     new_stats = WordStats(score_sum=review.score, \
                                           occurrences=1, \
-                                          average_score=review.score)
+                                          average_score=review.score, \
+                                          review_list=[ReviewOccurrence(review_counter, \
+                                                                        word_counter)] \
+                                          )
                     self.word_stats_trie[word] = new_stats
+
+                word_counter += 1
+
+            review_counter += 1
 
 
     def get_review_list(self, filename):
@@ -275,12 +368,13 @@ def test_classifier():
         classifier = Classifier(sys.argv[1])
 
     else:
-        classifier = Classifier()
+        classifier = Classifier('./input/movieReviews.txt')
 
 
     all_words = classifier.word_stats_trie.get_all_words()
     for word in all_words:
-        print(word, '---',  classifier.word_stats_trie[word])
+        if word == 'innocent':
+            print(word, '---',  classifier.word_stats_trie[word])
 
     
     sentences = ['bad bad crap terrible', 'good great marvelous bright fantastic']
@@ -288,6 +382,8 @@ def test_classifier():
     print()
     for sentence in sentences:
         print(classifier.evaluate_sentence(sentence), '---', sentence)
+
+    classifier.print_reviews_with_word('innocent', 'Neutral')
 
 #===================== test_kaggle_classifier =====================
 def test_kaggle_classifier():
@@ -299,6 +395,6 @@ def test_kaggle_classifier():
 
 
 if __name__ == '__main__':
-    # test_classifier()
-    test_kaggle_classifier()
+    test_classifier()
+    #test_kaggle_classifier()
 
