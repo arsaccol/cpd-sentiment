@@ -232,6 +232,12 @@ if __name__ == '__main__':
     words = ['buy', 'bull', 'bear', 'bid', 'bell',
              'sell', 'stock', 'stop', 'stomp', 'bust']
 
+    input_file = open('./input/movieReviews.txt')
+    for line in input_file:
+        for word in line.split():
+            t.insert(word)
+    
+
     counter = 1
     for word in words:
         t[word] = counter * 1000
@@ -239,9 +245,9 @@ if __name__ == '__main__':
 
     t['setitem'] = {'this': 1234, 'that': 4321}
 
-    print(t)
-    print(t.get_all_words())
-    print('length of trie:',len(t))
+    #print(t)
+    #print(t.get_all_words())
+    #print('length of trie:',len(t))
 
     try:
         value = t['buddy']
@@ -251,9 +257,9 @@ if __name__ == '__main__':
     print('Iterating over trie!')
     for accepting_node in t:
         pass
-        print(accepting_node.word, '---', accepting_node.data)
+        #print(accepting_node.word, '---', accepting_node.data)
 
-    prefix = 'stopper'
+    prefix = input('Enter a prefix to search: ')
     try:
         words_with_prefix = t.get_words_with_prefix(prefix)
         print('\nWords with prefix ' + '\"' + prefix + '\"' + ':')

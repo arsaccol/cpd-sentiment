@@ -4,6 +4,7 @@ from collections import namedtuple
 import sys
 from pprint import pprint
 import linecache
+import StopWords
 
 Review = namedtuple('Review', ['score', 'text'])
 WordStats = namedtuple('WordStats', ['score_sum', 'occurrences', 'average_score', 'review_list'])
@@ -23,8 +24,12 @@ class Classifier:
         self.review_filename = filename
         self.word_stats_trie= Trie()
         self.review_list = self.get_review_list(filename)
-        self.set_word_stats()
 
+        self.stop_words = Trie()
+        for word in StopWords.stop_words:
+            self.stop_words[word] = None
+
+        self.set_word_stats()
 
     def get_reviews_with_word(self, word):
         '''
@@ -118,9 +123,7 @@ class Classifier:
             try:
                 word_stats = self.word_stats_trie[word]
             except KeyError:
-                word_stats = WordStats(score_sum=2, occurrences=1, average_score=2.0)
-                if store_absent:
-                    self.word_stats_trie[word] = word_stats 
+                word_stats = WordStats(score_sum=2, occurrences=1, average_score=2.0, review_list=list())
 
             total_sum += word_stats.average_score
                 
@@ -149,34 +152,35 @@ class Classifier:
         for review in self.review_list:
             word_counter = 0
             for word in review.text.split():
-                if word in self.word_stats_trie:
-                    old_word_stats = self.word_stats_trie[word] 
+                if word not in self.stop_words:
+                    if word in self.word_stats_trie:
+                        old_word_stats = self.word_stats_trie[word] 
 
-                    new_score_sum = review.score + old_word_stats.score_sum
-                    new_occurrences = 1 + old_word_stats.occurrences
-                    # rather than compute new_average on the fly, we should use
-                    # Trie iteration on all words at a later stage
-                    new_average = new_score_sum / new_occurrences
+                        new_score_sum = review.score + old_word_stats.score_sum
+                        new_occurrences = 1 + old_word_stats.occurrences
+                        # rather than compute new_average on the fly, we should use
+                        # Trie iteration on all words at a later stage
+                        new_average = new_score_sum / new_occurrences
 
-                    # set review occurrence list for this word
-                    review_list = old_word_stats.review_list
-                    review_list.append(ReviewOccurrence(review_counter, word_counter))
+                        # set review occurrence list for this word
+                        review_list = old_word_stats.review_list
+                        review_list.append(ReviewOccurrence(review_counter, word_counter))
 
-                    new_word_stats = WordStats(new_score_sum, new_occurrences, \
-                                               new_average, review_list)
+                        new_word_stats = WordStats(new_score_sum, new_occurrences, \
+                                                   new_average, review_list)
 
-                    self.word_stats_trie[word] = new_word_stats
+                        self.word_stats_trie[word] = new_word_stats
 
-                else:
-                    new_stats = WordStats(score_sum=review.score, \
-                                          occurrences=1, \
-                                          average_score=review.score, \
-                                          review_list=[ReviewOccurrence(review_counter, \
-                                                                        word_counter)] \
-                                          )
-                    self.word_stats_trie[word] = new_stats
+                    else:
+                        new_stats = WordStats(score_sum=review.score, \
+                                              occurrences=1, \
+                                              average_score=review.score, \
+                                              review_list=[ReviewOccurrence(review_counter, \
+                                                                            word_counter)] \
+                                              )
+                        self.word_stats_trie[word] = new_stats
 
-                word_counter += 1
+                    word_counter += 1
 
             review_counter += 1
 
@@ -389,8 +393,15 @@ def test_classifier():
     for sentence in sentences:
         print(classifier.evaluate_sentence(sentence), '---', sentence)
 
-    significant_words = ['good', 'bad', 'crap', 'terrible', 'great', 'fantastic']
+
+    significant_words = []
     sentiments = ['Negative', 'Neutral', 'Positive']
+    input_word = ' '
+    while input_word:
+        input_word = input('Enter a word to lookup: ')
+        significant_words.append(input_word)
+
+    #significant_words = ['good', 'bad', 'crap', 'terrible', 'great', 'fantastic']
 
     for word in significant_words:
         for sentiment in sentiments:
@@ -404,6 +415,7 @@ def test_classifier():
                 break
         if stop == 'stop':
             break
+
 
 #===================== test_kaggle_classifier =====================
 def test_kaggle_classifier():
