@@ -1,4 +1,3 @@
-# might have to use src.Trie if importing from main.py...
 from Trie import Trie 
 from collections import namedtuple
 import sys
@@ -10,10 +9,8 @@ Review = namedtuple('Review', ['score', 'text'])
 WordStats = namedtuple('WordStats', ['score_sum', 'occurrences', 'average_score', 'review_list'])
 
 ReviewOccurrence = namedtuple('ReviewOccurrence', ['file_line_id', 'word_position'])
-#ReviewList = namedtuple('ReviewList', [
 
 class Classifier:
-    # TODO: implement Kaggle test functionality
     '''
     Initialize with a filename, it'll extract scores for the words from sentences in 
         the input file.
@@ -147,6 +144,10 @@ class Classifier:
 
         -WordStats.average_score is simply the average, score_sum divided by occurrences,
             of our given word.
+
+        -WordStats.review_list list()s the reviews in which a word has occurred, by line 
+            number in the input file, and the position in the review in which the word has
+            occurred.
         '''
         review_counter = 0
         for review in self.review_list:

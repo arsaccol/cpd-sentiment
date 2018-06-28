@@ -1,5 +1,3 @@
-# TODO: implement proper __iter__ and __next__ functions, to enable 
-#       iteration over words with for
 class Trie:
     '''
     Trie dictionary. Stores words associated with satellite data.
