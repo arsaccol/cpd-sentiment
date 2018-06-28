@@ -32,6 +32,19 @@ def main():
 
     #word_dictionary = dict() # word -> number of occurrences
     word_dictionary = Trie()
+    stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your",
+                 "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her",
+                 "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs",
+                 "themselves", "what", "which", "who", "whom", "this", "that", "these",
+                 "those", "am", "is", "are", "was", "were", "be", "been", "being", "have",
+                 "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and",
+                 "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for",
+                 "with", "about", "against", "between", "into", "through", "during", "before",
+                 "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off",
+                 "over", "under", "again", "further", "then", "once", "here", "there", "when", "where",
+                 "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such",
+                 "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will",
+                 "just", "don", "should", "now"]
     
     for review in review_list:
         count = 1
@@ -82,27 +95,31 @@ def main():
         occurr = 0
         for word in input_word.split():
             clean_word(word)
-            try:
-                word_stats = word_dictionary[word]
-            except KeyError:
+            if word not in stop_words:
+                try:
+                    word_stats = word_dictionary[word]
+                except KeyError:
+                    word_dictionary[word] = WordStats(score_sum=2, occurrences=1, average=2.0)
+                    word_stats = word_dictionary[word]
+            else:
                 word_dictionary[word] = WordStats(score_sum=2, occurrences=1, average=2.0)
                 word_stats = word_dictionary[word]
-
             accumulator = accumulator + word_stats.score_sum / word_stats.occurrences
             occurr = occurr + 1
             sentence_value = accumulator/occurr
 
-        print('sentence value = ' + (str(sentence_value)))
-        if (round(sentence_value)) == 0 :
-            print('sentimento negativo')
-        elif (round(sentence_value)) == 1 :
-            print('sentimento um tanto negativo')
-        elif (round(sentence_value)) == 2 :
-            print('sentimento neutro')
-        elif (round(sentence_value)) == 3 :
-            print('sentimento um pouco positivo')
-        else:
-            print('sentimento positivo')
+        if(input_word != 'SAIR'):
+            print('sentence value = ' + (str(sentence_value)))
+            if (round(sentence_value)) == 0 :
+                print('sentimento negativo')
+            elif (round(sentence_value)) == 1 :
+                print('sentimento um tanto negativo')
+            elif (round(sentence_value)) == 2 :
+                print('sentimento neutro')
+            elif (round(sentence_value)) == 3 :
+                print('sentimento um pouco positivo')
+            else:
+                print('sentimento positivo')
 
         #READING INPUT FILE FOR EVALUATION
 
@@ -123,11 +140,15 @@ def main():
             occurr = 0
             for word in input_word.split():
                 clean_word(word)
-            try:
-                word_stats = word_dictionary[word]
-            except KeyError:
-                word_dictionary[word] = WordStats(score_sum=2, occurrences=1, average=2.0)
-                word_stats = word_dictionary[word]
+                if word not in stop_words:
+                    try:
+                        word_stats = word_dictionary[word]
+                    except KeyError:
+                        word_dictionary[word] = WordStats(score_sum=2, occurrences=1, average=2.0)
+                        word_stats = word_dictionary[word]
+                else:
+                    word_dictionary[word] = WordStats(score_sum=2, occurrences=1, average=2.0)
+                    word_stats = word_dictionary[word]
 
             accumulator = accumulator + word_stats.score_sum / word_stats.occurrences
             occurr = occurr + 1
