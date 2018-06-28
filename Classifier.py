@@ -65,7 +65,7 @@ class Classifier:
             print('Reviews with word ' + '\"' + word + '\"' + ' (negative sentiment):')
             for review_id, position, text in position_review_pairs:
                 sentiment_val = self.evaluate_sentence(text[2:])
-                if int(sentiment_val) < 2:
+                if round(sentiment_val) < 2:
                     print('=================================================================')
                     print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
                           '\t  Sentiment ' + str(sentiment_val))
@@ -78,7 +78,7 @@ class Classifier:
             print('Reviews with word ' + '\"' + word + '\"' + ' (positive sentiment):')
             for review_id, position, text in position_review_pairs:
                 sentiment_val = self.evaluate_sentence(text[2:])
-                if int(sentiment_val) == 2:
+                if round(sentiment_val) == 2:
                     print('=================================================================')
                     print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
                           '\t  Sentiment ' + str(sentiment_val))
@@ -92,7 +92,7 @@ class Classifier:
             print('Reviews with word ' + '\"' + word + '\"' + ' (positive sentiment):')
             for review_id, position, text in position_review_pairs:
                 sentiment_val = self.evaluate_sentence(text[2:])
-                if int(sentiment_val) > 2:
+                if round(sentiment_val) > 2:
                     print('=================================================================')
                     print('Review #' + str(review_id) + '\t  Word #' + str(position) + \
                           '\t  Sentiment ' + str(sentiment_val))
